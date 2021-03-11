@@ -1,0 +1,56 @@
+{% extends "base_templates/basic.html" %}
+{% load crispy_forms_tags %}
+
+{% block form %}
+    <h5>Criar lista</h5>
+    <form method="POST">
+        {% crispy form %}
+        {% comment %} <div class="mb-3">
+            <label for="todo-title" class="form-label">Título</label>
+            <input type="text" class="form-control" id="todo-title">
+        </div>
+        <div class="mb-3">
+            <label for="todo-items" class="form-label">Itens</label>
+            <textarea type="text" class="form-control" id="todo-items" rows="3" placeholder="Separe os itens por ; &#10;Ex: Fazer compras; Lavar louça"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary float-end">Salvar</button> {% endcomment %}
+    </form>
+{% endblock %}
+
+{% block content %}
+        <div class="row p-3" data-masonry='{"percentPosition": true }'>
+            {% for todo in todo_list %}
+                <div class="col-md-5 col-sm-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ todo.title }}</h5>
+                            
+                            <ul class="list-group list-group-flush">
+                                {% for item in todo.item_set.all %}
+                                    <li class="list-group-item">
+                                        <div class="form-check" onclick='window.location.href="check_item/?item_uuid={{ item.uuid }}"'>
+                                            <input class="form-check-input" type="checkbox" value="" id="item-{{ item.uuid }}" {% if item.checked %}checked{% endif %}>
+                                            <label class="form-check-label d-flex justify-content-between {% if item.checked %}text-decoration-line-through{% endif %}" for="item-{{ item.uuid }}">
+                                                {{ item.content }}
+                                                <span>
+                                                    <a href="delete/item/?item_uuid={{ item.uuid }}">
+                                                        <i class="fa fa-times text-dark"></i>
+                                                    </a>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            <div class="d-flex justify-content-end">
+                                <a href="delete/todo/?todo_uuid={{ todo.uuid }}" class="card-link link-danger">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+{% endblock %}
